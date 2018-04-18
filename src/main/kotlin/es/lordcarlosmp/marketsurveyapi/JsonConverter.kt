@@ -1,4 +1,4 @@
-package es.lordcarlosm.marketsurveyapi
+package es.lordcarlosmp.marketsurveyapi
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

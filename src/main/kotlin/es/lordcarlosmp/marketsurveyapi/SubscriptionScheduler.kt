@@ -1,11 +1,11 @@
-package es.lordcarlosm.marketsurveyapi
+package es.lordcarlosmp.marketsurveyapi
 
-import es.lordcarlosm.marketsurveyapi.SubscriptionFrequency.DAILY
-import es.lordcarlosm.marketsurveyapi.SubscriptionFrequency.MONTHLY
-import es.lordcarlosm.marketsurveyapi.SubscriptionFrequency.WEEKLY
-import es.lordcarlosm.marketsurveyapi.SubscriptionFrequency.YEARLY
-import es.lordcarlosm.marketsurveyapi.database.getMatchingMarketSurveys
-import es.lordcarlosm.marketsurveyapi.database.getSubscribers
+import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency.DAILY
+import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency.MONTHLY
+import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency.WEEKLY
+import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency.YEARLY
+import es.lordcarlosmp.marketsurveyapi.database.getMatchingMarketSurveys
+import es.lordcarlosmp.marketsurveyapi.database.getSubscribers
 import it.sauronsoftware.cron4j.Scheduler
 import javax.servlet.ServletContextEvent
 import javax.servlet.ServletContextListener

@@ -1,8 +1,8 @@
-package es.lordcarlosm.marketsurveyapi
+package es.lordcarlosmp.marketsurveyapi
 
-import es.lordcarlosm.marketsurveyapi.database.getAllSubscribers
-import es.lordcarlosm.marketsurveyapi.database.getMatchingMarketSurveys
-import es.lordcarlosm.marketsurveyapi.database.saveToDatabase
+import es.lordcarlosmp.marketsurveyapi.database.getAllSubscribers
+import es.lordcarlosmp.marketsurveyapi.database.getMatchingMarketSurveys
+import es.lordcarlosmp.marketsurveyapi.database.saveToDatabase
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT

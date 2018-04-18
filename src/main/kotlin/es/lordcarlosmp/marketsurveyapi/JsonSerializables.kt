@@ -1,9 +1,9 @@
-package es.lordcarlosm.marketsurveyapi
+package es.lordcarlosmp.marketsurveyapi
 
-import es.lordcarlosm.marketsurveyapi.SubscriptionType.FTP
-import es.lordcarlosm.marketsurveyapi.SubscriptionType.MAIL
-import es.lordcarlosm.marketsurveyapi.SubscriptionType.PHONE
-import es.lordcarlosm.marketsurveyapi.SubscriptionType.POSTAL
+import es.lordcarlosmp.marketsurveyapi.SubscriptionType.FTP
+import es.lordcarlosmp.marketsurveyapi.SubscriptionType.MAIL
+import es.lordcarlosmp.marketsurveyapi.SubscriptionType.PHONE
+import es.lordcarlosmp.marketsurveyapi.SubscriptionType.POSTAL
 import java.util.*
 
 /**

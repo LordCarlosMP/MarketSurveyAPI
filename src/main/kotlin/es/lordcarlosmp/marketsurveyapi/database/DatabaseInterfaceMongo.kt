@@ -1,4 +1,4 @@
-package es.lordcarlosm.marketsurveyapi.database
+package es.lordcarlosmp.marketsurveyapi.database
 
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -9,14 +9,14 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Filters.gte
 import com.mongodb.client.model.Filters.lte
 import com.mongodb.client.model.Filters.nin
-import es.lordcarlosm.marketsurveyapi.Gender
-import es.lordcarlosm.marketsurveyapi.MarketSurvey
-import es.lordcarlosm.marketsurveyapi.MarketSurveyRequest
-import es.lordcarlosm.marketsurveyapi.MarketSurveySubscription
-import es.lordcarlosm.marketsurveyapi.SubscriptionFrequency
-import es.lordcarlosm.marketsurveyapi.deserializeMarketSurvey
-import es.lordcarlosm.marketsurveyapi.deserializeMarketSurveySubscription
-import es.lordcarlosm.marketsurveyapi.serialize
+import es.lordcarlosmp.marketsurveyapi.Gender
+import es.lordcarlosmp.marketsurveyapi.MarketSurvey
+import es.lordcarlosmp.marketsurveyapi.MarketSurveyRequest
+import es.lordcarlosmp.marketsurveyapi.MarketSurveySubscription
+import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency
+import es.lordcarlosmp.marketsurveyapi.deserializeMarketSurvey
+import es.lordcarlosmp.marketsurveyapi.deserializeMarketSurveySubscription
+import es.lordcarlosmp.marketsurveyapi.serialize
 import org.bson.Document
 import org.bson.conversions.Bson
 import java.text.SimpleDateFormat

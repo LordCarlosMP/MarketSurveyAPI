@@ -1,4 +1,4 @@
-package es.lordcarlosm.marketsurveyapi.database
+package es.lordcarlosmp.marketsurveyapi.database
 
 import com.google.gson.Gson
 import java.io.File
