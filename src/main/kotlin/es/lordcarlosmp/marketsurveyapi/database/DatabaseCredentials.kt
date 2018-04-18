@@ -29,6 +29,7 @@ data class DatabaseCredentials(
  *  file inside the .war and translates it to a
  *  DatabaseCredentials.
  */
+
 val CREDENTIALS: DatabaseCredentials by lazy {
 
 	val classloader = Thread.currentThread().contextClassLoader
