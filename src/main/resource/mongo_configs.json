@@ -1,0 +1,8 @@
+{
+  "host": "marketsurveyapidb.lordcarlosmp.es",
+  "port": 27017,
+  "user": "marketsurveyapi",
+  "pass": "Belugas8Delfines",
+  "database": "marketsurveyapi",
+  "authDatabase": "marketsurveyapi"
+}
