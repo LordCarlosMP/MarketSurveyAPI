@@ -26,7 +26,7 @@ MarketsurveyAPI has 3 functionalities:
 
 1. Download [this](https://github.com/LordCarlosMP/marketsurveyapi) GitHub repository.
 
-2. Copy /build/libs/marketsurveyapi to tomcat "appBase" directory, usually $CATALINA_HOME/webapps.
+2. Copy marketsurveyapi.war to tomcat "appBase" directory, usually $CATALINA_HOME/webapps.
 
 3. Start Apache Tomcat server.
 
