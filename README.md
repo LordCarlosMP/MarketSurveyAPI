@@ -1,9 +1,11 @@
 # marketsurveyapi
 
 ## Getting Started
-A RESTful API made by Carlos Muñoz Pelaz for [Caravelo](https://www.caravelo.com/).
+A RESTful API made by Carlos Muñoz Pelaz
 
-This project has no useful logic, is just an example of API.
+Esta API consiste en introducir y buscar estudios de mercado acorde a los requisitos (edad, tema, salario, edad, país, 
+
+This API consist of in
 
 MarketsurveyAPI has 3 functionalities:
 
@@ -11,7 +13,7 @@ MarketsurveyAPI has 3 functionalities:
     
     2. Retrieving market surveys according to a market survey request.
     
-    3. Submitting subscriptions.
+    3. Submnullitting subscriptions.
     
     4. Sending notifications to subscribiers.
     
@@ -47,7 +49,7 @@ The PUT body may be a JSON in this format:
   "subject": 1,
   "date": "2018-04-17",
   "country": "ES",
-  "provider": "Great market surveys Inc",
+  "provider": "Great market survekys Inc",
   "target": {
     "genders": [
       "MALE",

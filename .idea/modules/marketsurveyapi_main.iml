@@ -1,79 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="marketsurveyapi:main" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="es.lordcarlosmp" external.system.module.type="sourceSet" external.system.module.version="1.0-SNAPSHOT" type="JAVA_MODULE" version="4">
+<module version="4">
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="3" platform="JVM 1.8" useProjectSettings="false">
-        <compilerSettings />
+      <configuration version="3" platform="JVM 1.6" useProjectSettings="false">
+        <compilerSettings>
+          <option name="additionalArguments" value="-java-parameters" />
+        </compilerSettings>
         <compilerArguments>
           <option name="destination" value="$MODULE_DIR$/../../build/classes/kotlin/main" />
           <option name="noStdlib" value="true" />
           <option name="noReflect" value="true" />
           <option name="moduleName" value="marketsurveyapi" />
-          <option name="jvmTarget" value="1.8" />
           <option name="addCompilerBuiltIns" value="true" />
           <option name="loadBuiltInsFromDependencies" value="true" />
           <option name="languageVersion" value="1.2" />
           <option name="apiVersion" value="1.2" />
           <option name="pluginOptions">
-            <array />
+            <array>
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.validation.annotation.Validated" />
+              <option value="plugin:org.jetbrains.kotlin.noarg:annotation=org.mongodb.morphia.annotations.Embedded" />
+              <option value="plugin:org.jetbrains.kotlin.noarg:annotation=org.mongodb.morphia.annotations.Entity" />
+              <option value="plugin:org.jetbrains.kotlin.noarg:invokeInitializers=false" />
+            </array>
           </option>
           <option name="pluginClasspaths">
-            <array />
+            <array>
+              <option value="$KOTLIN_BUNDLED$/lib/allopen-compiler-plugin.jar" />
+              <option value="$KOTLIN_BUNDLED$/lib/noarg-compiler-plugin.jar" />
+            </array>
           </option>
         </compilerArguments>
       </configuration>
     </facet>
-    <facet type="web" name="Web Gradle : marketsurveyapi.war">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../src/main/webapp/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/../../src/main/webapp" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-  </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
-    <output url="file://$MODULE_DIR$/../../out/production/classes" />
-    <exclude-output />
-    <content url="file://$MODULE_DIR$/../../src/main">
-      <sourceFolder url="file://$MODULE_DIR$/../../src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.inject:jersey-hk2:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.containers:jersey-container-servlet-core:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.media:jersey-media-json-jackson:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.core:jersey-server:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.core:jersey-client:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.media:jersey-media-jaxb:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.core:jersey-common:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: org.mongodb:mongo-java-driver:3.6.3" level="project" />
-    <orderEntry type="library" name="Gradle: it.sauronsoftware.cron4j:cron4j:2.2.5" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31" level="project" />
-    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.2" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.jersey.ext:jersey-entity-filtering:2.27" level="project" />
-    <orderEntry type="library" name="Gradle: javax.ws.rs:javax.ws.rs-api:2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.hk2:hk2-locator:2.5.0-b42" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.hk2:hk2-api:2.5.0-b42" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.hk2:hk2-utils:2.5.0-b42" level="project" />
-    <orderEntry type="library" name="Gradle: javax.annotation:javax.annotation-api:1.2" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.hk2.external:javax.inject:2.5.0-b42" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.hk2:osgi-resource-locator:1.0.1" level="project" />
-    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.8.10" level="project" />
-    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.8.10" level="project" />
-    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.8.10" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.31" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.31" level="project" />
-    <orderEntry type="library" name="Gradle: org.glassfish.hk2.external:aopalliance-repackaged:2.5.0-b42" level="project" />
-    <orderEntry type="library" name="Gradle: org.javassist:javassist:3.22.0-CR2" level="project" />
-    <orderEntry type="library" name="Gradle: javax.validation:validation-api:1.1.0.Final" level="project" />
-    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.8.10" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Gradle: javax.inject:javax.inject:1" level="project" />
   </component>
 </module>

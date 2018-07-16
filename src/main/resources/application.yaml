@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      database: marketsurveyapi
+      # authentication-database:
+      # username: some-user
+      # password: secret

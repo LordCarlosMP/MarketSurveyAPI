@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="HaskellBuildOptions">
     <ghcPath>C:\Program Files\Haskell Platform\8.2.2\bin\ghc.exe</ghcPath>
     <cabalPath>C:\Program Files\Haskell Platform\8.2.2\lib\extralibs\bin\cabal.exe</cabalPath>
     <stackPath>C:\Users\LordCarlosMP\AppData\Roaming\local\bin\stack.exe</stackPath>
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/src/test/java/es/lordcarlosmp/marketsurveyapi/MarketSurveysControllerTest.kt" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

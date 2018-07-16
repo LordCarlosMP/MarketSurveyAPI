@@ -1,82 +1,96 @@
 package es.lordcarlosmp.marketsurveyapi
 
-import es.lordcarlosmp.marketsurveyapi.database.getAllSubscribers
-import es.lordcarlosmp.marketsurveyapi.database.getMatchingMarketSurveys
-import es.lordcarlosmp.marketsurveyapi.database.saveToDatabase
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
-import javax.ws.rs.core.MediaType
+import es.lordcarlosmp.marketsurveyapi.database.MarketSurveyRepository
+import es.lordcarlosmp.marketsurveyapi.database.SubscriptionRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RestController
 
+//todo: mejorar este comentario
 /**
- * The class where market survey request are made.
+ * The class where market survey requests are made.
  */
-@Path("marketsurveys")
-class MarketSurveys {
-
+@RestController
+@RequestMapping("marketsurveys")
+class MarketSurveyController {
+	
+	@Autowired
+	lateinit var marketSurveyRepo: MarketSurveyRepository
+	
 	/**
 	 * @return A json array with all the market surveys that
 	 * fit the request.
 	 *
-	 * @param data The MarketSurveyRequest json.
+	 * @param msr The Request.
 	 */
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	fun getMarketSurveys(data: String) = data.deserializeMarketSurveyRequest().getMatchingMarketSurveys().serialize()
-
+	@RequestMapping(method = [RequestMethod.PUT])
+	fun getMarketSurveys(@RequestBody msr: Request): List<MarketSurvey> {
+		return marketSurveyRepo.readMatchingRequest(msr)
+	}
+	
 	/**
 	 * This function stores the MarketSurvey json in
 	 * the database.
 	 *
 	 * @return If the MarketSurvey was created.
 	 *
-	 * @param data The MarketSurvey's json.
+	 * @param ms The MarketSurvey.
 	 */
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	fun createMarketSurvey(data: String): Int {
-		data.deserializeMarketSurvey().saveToDatabase()
-		return 201
+	//todo: los responses
+	@RequestMapping(method = [RequestMethod.POST])
+	fun createMarketSurvey(@RequestBody ms: MarketSurvey): ResponseEntity<Any> {
+		marketSurveyRepo.create(ms)
+		return ResponseEntity(HttpStatus.CREATED)
 	}
 }
 
 /**
  * The class where market survey subscriptions are submitted.
  */
-@Path("subscriptions")
-class MarketSurveySubscriptions {
-
+@RestController
+@RequestMapping("subscriptions")
+class SubscriptionController(val subscriptionRepo: SubscriptionRepository) {
+	
 	/**
-	 * This function stores the MarketSurveySubscription json in
+	 * This function stores the Subscription json in
 	 * the database.
+	 *Int
+	 * @return If the Subscription was created.
 	 *
-	 * @return If the MarketSurveySubscription was created.
-	 *
-	 * @param data The MarketSurveySubscription's json.
+	 * @param mss The Subscription.
 	 */
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	fun createMarketSurveySubscription(data: String): Int {
-		data.deserializeMarketSurveySubscription().saveToDatabase()
-		return 201
+	@RequestMapping(method = [RequestMethod.PUT])
+	fun createMarketSurveySubscription(@RequestBody mss: Subscription): ResponseEntity<Any> {
+		subscriptionRepo.create(mss)
+		return ResponseEntity(HttpStatus.CREATED)
 	}
-
-
+	
 	/**
 	 * This is just a function to verify that
 	 *
-	 * @See createMarketSurveySubscription(String) works.
+	 * @See create Subscription(String) works.
 	 *
-	 * MarketSurveySubscriptions are automatically
-	 * sended in SubscriptionScheduler.
+	 * SubscriptionController are automatically
+	 * sended in SubscriptionScheduler.json@RequestBody
 	 *
 	 * @See scheduleNotificationTasks()
 	 *
-	 * @return All MarketSurveySubscriptions.
+	 * @return All SubscriptionController.
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	fun getMarketSurveySubscribers() = getAllSubscribers().serialize()
+	@RequestMapping(method = [RequestMethod.GET])
+	fun getMarketSurveySubscribers() = subscriptionRepo.findAll()
+}
+
+@SpringBootApplication
+class Application
+
+fun main(args: Array<String>) {
+	SpringApplication.run(Application::class.java, *args)
+	SubscriptionScheduler()
 }
