@@ -8,8 +8,6 @@ import es.lordcarlosmp.marketsurveyapi.Subscription
 import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency
 import org.mongodb.morphia.Datastore
 import org.mongodb.morphia.Key
-import org.mongodb.morphia.query.UpdateOperations
-import org.mongodb.morphia.query.UpdateResults
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import java.text.SimpleDateFormat
@@ -19,28 +17,37 @@ import java.util.*
 
 interface MarketSurveyRepository {
 	fun create(survey: MarketSurvey): Key<MarketSurvey>
-	fun readMatchingRequest(request: Request): List<MarketSurvey>
+	fun findAllMatching(request: Request): List<MarketSurvey>
+	fun findById(id: String): MarketSurvey?
+	fun findAll(): List<MarketSurvey>?
+	fun delete(id: String): WriteResult
 }
 
 interface SubscriptionRepository {
-	fun create(book: Subscription): Key<Subscription>
-	fun read(id: String): Subscription
-	fun findAll(): List<Subscription>
+	fun create(subscription: Subscription): Key<Subscription>
 	fun findAllInFrecuency(frequency: SubscriptionFrequency): List<Subscription>
-	fun update(subscription: Subscription, operations: UpdateOperations<Subscription>): UpdateResults
-	fun delete(subscription: Subscription): WriteResult
-	fun createOperations(): UpdateOperations<Subscription>
+	fun findById(id: String): Subscription?
+	fun findAll(): List<Subscription>
+	fun delete(id: String): WriteResult
 }
 
 @Repository
 class MongoMarketSurveyRepository : MarketSurveyRepository {
+	
 	@Autowired
 	private lateinit var datastore: Datastore
 	
-	override fun create(survey: MarketSurvey): Key<MarketSurvey> = datastore.save(survey)
+	override fun findById(id: String) =
+			datastore.get<MarketSurvey, Any>(MarketSurvey::class.java, id)
 	
-	//filter
-	override fun readMatchingRequest(request: Request): List<MarketSurvey> {
+	override fun findAll() = datastore.find(MarketSurvey::class.java).asList()
+	
+	override fun delete(id: String) = datastore.delete(MarketSurvey::class.java, id)!!
+	
+	override fun create(survey: MarketSurvey) = datastore.save(survey)!!
+	
+	override fun findAllMatching(request: Request): List<MarketSurvey> {
+		
 		with(request) {
 			(datastore.createQuery(MarketSurvey::class.java)).run {
 				field("subject").equal(subject)
@@ -71,13 +78,13 @@ class MongoMarketSurveyRepository : MarketSurveyRepository {
 				
 				//Add date filters if the date is not null.
 				date?.run {
-					field("date").greaterThan(toSql())
+					field("date").greaterThan(formatToyyyymmdd())
 				}
 				
 				//Add country filters if the countries array is not null.
 				countries?.run { field("country").`in`(countries) }
 				
-				return fetch().all()
+				return fetch().toList()
 			}
 		}
 	}
@@ -88,25 +95,17 @@ class MongoSubscriptionRepository : SubscriptionRepository {
 	@Autowired
 	private lateinit var datastore: Datastore
 	
-	override fun findAllInFrecuency(frequency: SubscriptionFrequency): List<Subscription> =
-			datastore.createQuery(Subscription::class.java).field("frequency").equal(frequency).fetch().all()
+	override fun findAllInFrecuency(frequency: SubscriptionFrequency) =
+			datastore.createQuery(Subscription::class.java).field("frequency").equal(frequency).fetch().toList()
 	
-	override fun create(book: Subscription): Key<Subscription> = datastore.save(book)
+	override fun create(subscription: Subscription) = datastore.save(subscription)
 	
-	override fun read(id: String): Subscription =
-			datastore.get<Subscription, Any>(Subscription::class.java, id)
+	override fun findById(id: String) = datastore.get<Subscription, Any>(Subscription::class.java, id)
 	
-	override fun findAll(): List<Subscription> = datastore.find(Subscription::class.java).asList()
+	override fun findAll() = datastore.find(Subscription::class.java).asList()
 	
-	override fun update(subscription: Subscription, operations: UpdateOperations<Subscription>): UpdateResults =
-			datastore.update(subscription, operations)
+	override fun delete(id: String) = datastore.delete(Subscription::class.java, id)
 	
-	override fun delete(subscription: Subscription): WriteResult = datastore.delete(subscription)
-	
-	override fun createOperations(): UpdateOperations<Subscription> =
-			datastore.createUpdateOperations(Subscription::class.java)
 }
 
-fun <T> Iterable<T>.all() = map { it }
-
-fun Date.toSql() = SimpleDateFormat("yyyy-MM-dd").format(this)!!
+fun Date.formatToyyyymmdd() = SimpleDateFormat("yyyy-MM-dd").format(this)!!

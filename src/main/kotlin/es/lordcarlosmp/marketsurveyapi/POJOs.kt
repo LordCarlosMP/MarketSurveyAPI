@@ -1,5 +1,6 @@
 package es.lordcarlosmp.marketsurveyapi
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import es.lordcarlosmp.marketsurveyapi.SubscriptionType.FTP
 import es.lordcarlosmp.marketsurveyapi.SubscriptionType.MAIL
 import es.lordcarlosmp.marketsurveyapi.SubscriptionType.PHONE
@@ -32,7 +33,7 @@ data class Subscription(
 		/**
 		 * The subscription type.
 		 */
-		private val subscriptionType: List<SubscriptionType>,
+		val type: List<SubscriptionType>,
 		
 		/**
 		 * The subscription frequency.Array
@@ -42,7 +43,7 @@ data class Subscription(
 		/**
 		 * A class for storing the delivery data.
 		 */
-		private val sendData: SendData) {
+		val sendData: SendData) {
 	
 	/**
 	 * Notifies the sNoSuchMethodExceptionubscriber about the market surveys available,
@@ -52,8 +53,8 @@ data class Subscription(
 	 * The function below just prints its json in the application terminal.
 	 */
 	//todo: move
-	fun notifySubscriber(requests: List<MarketSurvey>) {
-		for (type in subscriptionType) {
+	fun notifySubscriber(requests: List<MarketSurvey>) {@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
+		for (type in type) {
 			println("Sending $requests to ${sendData.dataToSend(type)} by $type")
 		}
 	}
@@ -68,22 +69,22 @@ data class SendData(
 		/**
 		 *  The e-mail where to send the notification.
 		 */
-		private val mail: String?,
+		val mail: String? = null,
 		
 		/**
 		 * The phone number where to send the notification.
 		 */
-		private val phone: String?,
+		val phone: String? = null,
 		
 		/**
 		 * The postal direction where to send the notification.
 		 */
-		private val postalDirection: String?,
+		val postalDirection: String? = null,
 		
 		/**
 		 * The ftp where to send the notification.
 		 */
-		private val ftp: String?) {
+		val ftp: String? = null) {
 	//todo: move
 	fun dataToSend(type: SubscriptionType) = when (type) {
 		MAIL -> mail
@@ -123,6 +124,7 @@ data class Request(
 		 * The date where the market survey was made,
 		 * null means no filtering.
 		 */
+		@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
 		val date: Date?,
 		
 		/**
@@ -152,12 +154,14 @@ data class MarketSurvey(
 		/**
 		 * The date when the market survey was made.
 		 */
+		//todo: explica anotacion
+		@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
 		val date: Date,
 		
 		/**
 		 * The Country where the market survey was made.
 		 */
-
+		
 		val country: String,
 		
 		/**

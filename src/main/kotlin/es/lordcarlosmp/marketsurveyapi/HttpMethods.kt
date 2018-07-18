@@ -24,17 +24,6 @@ class MarketSurveyController {
 	lateinit var marketSurveyRepo: MarketSurveyRepository
 	
 	/**
-	 * @return A json array with all the market surveys that
-	 * fit the request.
-	 *
-	 * @param msr The Request.
-	 */
-	@RequestMapping(method = [RequestMethod.PUT])
-	fun getMarketSurveys(@RequestBody msr: Request): List<MarketSurvey> {
-		return marketSurveyRepo.readMatchingRequest(msr)
-	}
-	
-	/**
 	 * This function stores the MarketSurvey json in
 	 * the database.
 	 *
@@ -48,43 +37,84 @@ class MarketSurveyController {
 		marketSurveyRepo.create(ms)
 		return ResponseEntity(HttpStatus.CREATED)
 	}
+	
+	/**
+	 * @return A json array with all the market surveys that
+	 * fit the request.
+	 *
+	 * @param msr The Request.
+	 */
+	@RequestMapping(method = [RequestMethod.PUT])
+	fun getMatchingMarketSurveys(@RequestBody msr: Request) = marketSurveyRepo.findAllMatching(msr)
+
+	/**
+	 * @return all the market surveys in the database.
+	 */
+	@RequestMapping(method = [RequestMethod.GET])
+	fun getAllMarketSurveys() = marketSurveyRepo.findAll()
+	
+	/**
+	 * @return The MarketSurvey whose id is [id], null if there's no MarketSurvey with that id.
+	 */
+	@RequestMapping(value = ["/id"], method = [RequestMethod.GET])
+	fun getMarketSurvey(id: String) = marketSurveyRepo.findById(id)
+	
+	/**
+	 * Deletes the MarketSurvey whose id is [id]
+	 */
+	@RequestMapping(method = [RequestMethod.DELETE])
+	fun deleteMarketSurvey(id: String) = marketSurveyRepo.delete(id)
 }
 
 /**
- * The class where market survey subscriptions are submitted.
+ * The controller where market survey subscriptions are submitted.
  */
 @RestController
 @RequestMapping("subscriptions")
-class SubscriptionController(val subscriptionRepo: SubscriptionRepository) {
+class SubscriptionController {
+	
+	@Autowired
+	lateinit var subscriptionRepo: SubscriptionRepository
 	
 	/**
-	 * This function stores the Subscription json in
+	 * This function stores the Subscription in
 	 * the database.
-	 *Int
+	 *
 	 * @return If the Subscription was created.
 	 *
-	 * @param mss The Subscription.
+	 * @param subscription The Subscription.
 	 */
-	@RequestMapping(method = [RequestMethod.PUT])
-	fun createMarketSurveySubscription(@RequestBody mss: Subscription): ResponseEntity<Any> {
-		subscriptionRepo.create(mss)
+	@RequestMapping(method = [RequestMethod.POST])
+	fun createMarketSurveywithSubscription(@RequestBody subscription: Subscription): ResponseEntity<Any> {
+		subscriptionRepo.create(subscription)
 		return ResponseEntity(HttpStatus.CREATED)
 	}
 	
 	/**
-	 * This is just a function to verify that
-	 *
-	 * @See create Subscription(String) works.
-	 *
-	 * SubscriptionController are automatically
-	 * sended in SubscriptionScheduler.json@RequestBody
-	 *
-	 * @See scheduleNotificationTasks()
-	 *
-	 * @return All SubscriptionController.
+	 * @return All Subscription in the Database.
 	 */
 	@RequestMapping(method = [RequestMethod.GET])
-	fun getMarketSurveySubscribers() = subscriptionRepo.findAll()
+	fun getAllMarketSurveySubscribers() = subscriptionRepo.findAll()
+	
+	/**
+	 * @return all market surveys in the whose frecuency is [frequency]
+	 */
+	@RequestMapping(method = [RequestMethod.PUT])
+	fun getAllMarketSurveySubscribersInFrecuency(frequency: SubscriptionFrequency) = subscriptionRepo.findAllInFrecuency(frequency)
+	
+	/**
+	 * @return The subscription with the given ID, null if there's no MarketSurvey with that id.
+	 */
+	@RequestMapping(value = "/id", method = [RequestMethod.GET])
+	fun getSubscriberById(id: String) = subscriptionRepo.findById(id)
+	
+	/**
+	 * This function deletes the subscription with [id].
+	 *
+	 * //todo: explicar return.
+	 */
+	@RequestMapping(method = [RequestMethod.DELETE])
+	fun deleteById(id: String) = subscriptionRepo.delete(id)
 }
 
 @SpringBootApplication

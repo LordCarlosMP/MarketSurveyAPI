@@ -1,4 +1,6 @@
 spring:
+#  jackson:
+#    date-format: yyyy-mm-dd
   data:
     mongodb:
       database: marketsurveyapi
