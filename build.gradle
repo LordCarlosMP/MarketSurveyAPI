@@ -55,6 +55,8 @@ plugins {
     id 'org.springframework.boot' version '2.0.3.RELEASE'
     id 'com.palantir.docker' version "0.20.1"
     id "org.jetbrains.kotlin.plugin.noarg" version "1.2.51"
+    id 'com.sourcemuse.mongo' version '1.0.6'
+//    id 'org.unbroken-dome.test-sets' version '1.4.5'
 }
 
 
@@ -66,7 +68,10 @@ bootJar {
 repositories {
     mavenCentral()
 }
-
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -83,10 +88,14 @@ dependencies {
 //    testCompile group: 'junit', name: 'junit', version: '4.12'
 //    testCompile group: 'org.junit', name: 'junit5-engine', version: '5.0.0-ALPHA'
 //    testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
+
+    integrationTestCompile group: 'com.zaxxer', name: 'HikariCP', version: '2.3.2'
 }
 
+
+
 docker {
-    dependsOn build
+    dependsOn build as Task
     name "lordcarlosmp/${bootJar.baseName}"
     files bootJar.archivePath
     buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
@@ -95,4 +104,51 @@ docker {
 noArg {
     annotation("org.mongodb.morphia.annotations.Embedded")
     annotation("org.mongodb.morphia.annotations.Entity")
+}
+
+mongo {
+    port 12345
+    logging 'console'
+}
+//
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integrationTest/java')
+        }
+        resources.srcDir file('src/integrationTest/resources')
+    }
+}
+
+//sourceSets {
+//    integrationTest {
+//        java.srcDir file('src/integrationTest/java')
+//        resources.srcDir file('src/integrationTest/resources')
+//        compileClasspath += sourceSets.main.output + configurations.testRuntime
+//        runtimeClasspath += output + compileClasspath
+//    }
+//}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    runWithMongoDb = true
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+//    dependsOn startMongoDb
+//    finalizedBy stopMongoDb
+}
+
+check.dependsOn integrationTest
+
+idea {
+    module {
+        testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+        testSourceDirs += project.sourceSets.integrationTest.kotlin.srcDirs
+        testSourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+    }
 }

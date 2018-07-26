@@ -1,10 +1,7 @@
 package es.lordcarlosmp.marketsurveyapi
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import es.lordcarlosmp.marketsurveyapi.SubscriptionType.FTP
-import es.lordcarlosmp.marketsurveyapi.SubscriptionType.MAIL
-import es.lordcarlosmp.marketsurveyapi.SubscriptionType.PHONE
-import es.lordcarlosmp.marketsurveyapi.SubscriptionType.POSTAL
+import org.bson.types.ObjectId
 import org.mongodb.morphia.annotations.Embedded
 import org.mongodb.morphia.annotations.Entity
 import org.mongodb.morphia.annotations.Id
@@ -31,11 +28,6 @@ data class Subscription(
 		val request: Request,
 		
 		/**
-		 * The subscription type.
-		 */
-		val type: List<SubscriptionType>,
-		
-		/**
 		 * The subscription frequency.Array
 		 */
 		val frequency: SubscriptionFrequency,
@@ -43,22 +35,7 @@ data class Subscription(
 		/**
 		 * A class for storing the delivery data.
 		 */
-		val sendData: SendData) {
-	
-	/**
-	 * Notifies the sNoSuchMethodExceptionubscriber about the market surveys available,
-	 * it is not implemented because providing market survey results
-	 * fall outside the scope of this assignment.
-	 *
-	 * The function below just prints its json in the application terminal.
-	 */
-	//todo: move
-	fun notifySubscriber(requests: List<MarketSurvey>) {@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
-		for (type in type) {
-			println("Sending $requests to ${sendData.dataToSend(type)} by $type")
-		}
-	}
-}
+		val sendData: SendData)
 
 /**
  * SendData is the class who stores the necessary
@@ -84,22 +61,7 @@ data class SendData(
 		/**
 		 * The ftp where to send the notification.
 		 */
-		val ftp: String? = null) {
-	//todo: move
-	fun dataToSend(type: SubscriptionType) = when (type) {
-		MAIL -> mail
-		POSTAL -> postalDirection
-		PHONE -> phone
-		FTP -> ftp
-	}
-}
-
-/**
- * The subscription types.
- */
-enum class SubscriptionType {
-	MAIL, POSTAL, PHONE, FTP
-}
+		val ftp: String? = null)
 
 /**
  * The subscription frequencies.
@@ -125,26 +87,26 @@ data class Request(
 		 * null means no filtering.
 		 */
 		@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
-		val date: Date?,
+		val date: Date? = null,
 		
 		/**
 		 * The country of the market survey request,
 		 * null means no filtering.
 		 */
-		val countries: List<String>?,
+		val countries: List<String>? = null,
 		
 		/**JsonConverter
 		 * The target of the desired market survey.
 		 * null means no filtering.
 		 */
-		val target: Target?
+		val target: Target? = null
 )
 
 @Entity
 data class MarketSurvey(
 		//todo: comentario
 		@Id
-		val id: String?,
+		val id: ObjectId,
 		/**
 		 * The subject of the survey, represented by a number
 		 * as the example in the API instructions.
@@ -184,7 +146,7 @@ data class Target(
 		val genders: List<Gender>?,
 		
 		/**
-		 * Th    id "org.jetbrains.kotlin.plugin.noarg"  version "1.2.51" age range of the market survey respondents,
+		 * The age range of the market survey respondents,
 		 * null means unknown.
 		 */
 		val age: Range?,

@@ -6,6 +6,7 @@ import es.lordcarlosmp.marketsurveyapi.MarketSurvey
 import es.lordcarlosmp.marketsurveyapi.Request
 import es.lordcarlosmp.marketsurveyapi.Subscription
 import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency
+import org.bson.types.ObjectId
 import org.mongodb.morphia.Datastore
 import org.mongodb.morphia.Key
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,8 +19,8 @@ import java.util.*
 interface MarketSurveyRepository {
 	fun create(survey: MarketSurvey): Key<MarketSurvey>
 	fun findAllMatching(request: Request): List<MarketSurvey>
-	fun findById(id: String): MarketSurvey?
-	fun findAll(): List<MarketSurvey>?
+	fun findById(id: ObjectId): MarketSurvey?
+	fun findAll(): List<MarketSurvey>
 	fun delete(id: String): WriteResult
 }
 
@@ -37,7 +38,7 @@ class MongoMarketSurveyRepository : MarketSurveyRepository {
 	@Autowired
 	private lateinit var datastore: Datastore
 	
-	override fun findById(id: String) =
+	override fun findById(id: ObjectId) =
 			datastore.get<MarketSurvey, Any>(MarketSurvey::class.java, id)
 	
 	override fun findAll() = datastore.find(MarketSurvey::class.java).asList()
@@ -50,21 +51,25 @@ class MongoMarketSurveyRepository : MarketSurveyRepository {
 		
 		with(request) {
 			(datastore.createQuery(MarketSurvey::class.java)).run {
+				
 				field("subject").equal(subject)
+				
 				target?.run {
-					//Add agquerye filters if the age range is not null.
+					
+					//Add query filters if the age range is not null.
 					age?.run {
-						field("target.age.start").greaterThan(start)
-						field("target.age.endInclusive").greaterThan(endInclusive)
+						field("target.age.start").greaterThanOrEq(start)
+						field("target.age.endInclusive").lessThanOrEq(endInclusive)
 					}
+					
 					//Add income filters if the income range is not null.
 					income?.run {
-						field("target.income.start").greaterThan(start)
-						field("target.income.endInclusive").greaterThan(endInclusive)
+						field("target.income.start").greaterThanOrEq(start)
+						field("target.income.endInclusive").lessThanOrEq(endInclusive)
 					}
+					
 					//Add gender filters if the gender array is not null.
 					genders?.run {
-						
 						//The best way to provide market surveys
 						//containing only the requested genders (or subsets)
 						//is ensuring that no "no required" gender is INSIDE our
@@ -77,12 +82,12 @@ class MongoMarketSurveyRepository : MarketSurveyRepository {
 				}
 				
 				//Add date filters if the date is not null.
-				date?.run {
-					field("date").greaterThan(formatToyyyymmdd())
-				}
+//				date?.run {
+//					field("date").greaterThan(formatToyyyymmdd())
+//				}
 				
-				//Add country filters if the countries array is not null.
-				countries?.run { field("country").`in`(countries) }
+//				Add country filters if the countries array is not null.
+				countries?.let { field("country").`in`(it) }
 				
 				return fetch().toList()
 			}
@@ -105,7 +110,6 @@ class MongoSubscriptionRepository : SubscriptionRepository {
 	override fun findAll() = datastore.find(Subscription::class.java).asList()
 	
 	override fun delete(id: String) = datastore.delete(Subscription::class.java, id)
-	
 }
 
 fun Date.formatToyyyymmdd() = SimpleDateFormat("yyyy-MM-dd").format(this)!!

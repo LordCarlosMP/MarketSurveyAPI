@@ -2,14 +2,17 @@ package es.lordcarlosmp.marketsurveyapi
 
 import es.lordcarlosmp.marketsurveyapi.database.MarketSurveyRepository
 import es.lordcarlosmp.marketsurveyapi.database.SubscriptionRepository
+import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 //todo: mejorar este comentario
@@ -46,7 +49,7 @@ class MarketSurveyController {
 	 */
 	@RequestMapping(method = [RequestMethod.PUT])
 	fun getMatchingMarketSurveys(@RequestBody msr: Request) = marketSurveyRepo.findAllMatching(msr)
-
+	
 	/**
 	 * @return all the market surveys in the database.
 	 */
@@ -56,14 +59,14 @@ class MarketSurveyController {
 	/**
 	 * @return The MarketSurvey whose id is [id], null if there's no MarketSurvey with that id.
 	 */
-	@RequestMapping(value = ["/id"], method = [RequestMethod.GET])
-	fun getMarketSurvey(id: String) = marketSurveyRepo.findById(id)
+	@RequestMapping(value = ["id"], method = [RequestMethod.GET])
+	fun getMarketSurveyById(@RequestParam id: ObjectId) = marketSurveyRepo.findById(id)
 	
 	/**
 	 * Deletes the MarketSurvey whose id is [id]
 	 */
 	@RequestMapping(method = [RequestMethod.DELETE])
-	fun deleteMarketSurvey(id: String) = marketSurveyRepo.delete(id)
+	fun deleteMarketSurvey(@RequestParam id: String) = marketSurveyRepo.delete(id)
 }
 
 /**
@@ -99,14 +102,14 @@ class SubscriptionController {
 	/**
 	 * @return all market surveys in the whose frecuency is [frequency]
 	 */
-	@RequestMapping(method = [RequestMethod.PUT])
-	fun getAllMarketSurveySubscribersInFrecuency(frequency: SubscriptionFrequency) = subscriptionRepo.findAllInFrecuency(frequency)
+	@RequestMapping(value = ["frequency"], method = [RequestMethod.GET])
+	fun getAllMarketSurveySubscribersInFrecuency(@RequestParam frequency: SubscriptionFrequency) = subscriptionRepo.findAllInFrecuency(frequency)
 	
 	/**
 	 * @return The subscription with the given ID, null if there's no MarketSurvey with that id.
 	 */
 	@RequestMapping(value = "/id", method = [RequestMethod.GET])
-	fun getSubscriberById(id: String) = subscriptionRepo.findById(id)
+	fun getSubscriptionById(id: String) = subscriptionRepo.findById(id)
 	
 	/**
 	 * This function deletes the subscription with [id].
@@ -121,6 +124,6 @@ class SubscriptionController {
 class Application
 
 fun main(args: Array<String>) {
-	SpringApplication.run(Application::class.java, *args)
-	SubscriptionScheduler()
+	val v: ConfigurableApplicationContext = SpringApplication.run(Application::class.java, *args)
+	SubscriptionScheduler(v.getBean(SubscriptionRepository::class.java), v.getBean(MarketSurveyRepository::class.java), Notifier)
 }

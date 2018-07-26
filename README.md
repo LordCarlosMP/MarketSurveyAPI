@@ -3,34 +3,31 @@
 ## Getting Started
 A RESTful API made by Carlos Muñoz Pelaz
 
-Esta API consiste en introducir y buscar estudios de mercado acorde a los requisitos (edad, tema, salario, edad, país, 
-
 This API consist of in
 
 MarketsurveyAPI has 3 functionalities:
 
-    1. Introducing market surveys.
+    1. CRUD operations with market surveys.
     
     2. Retrieving market surveys according to a market survey request.
     
-    3. Submnullitting subscriptions.
+    3. CRUD operations with subscriptions.
     
     4. Sending notifications to subscribiers.
     
 ### Prerequisites
 
-1. An Apache Tomcat server.
+1. Java Virtual machine or docker engine.
 
-2. Internet connection to access the database.
+2. A usable MongoDB the database and its type its credentials in the application.yml.
+
 ###### Hint:  You can modify database credentials in mongo_config.json (inside the .war).
 
 ### Installation
 
 1. Download [this](https://github.com/LordCarlosMP/marketsurveyapi) GitHub repository.
 
-2. Copy marketsurveyapi.war to tomcat "appBase" directory, usually $CATALINA_HOME/webapps.
-
-3. Start Apache Tomcat server.
+2 Run the .jar resulting of gradle build task or the container created by the gradle docker task.
 
 4. Install [Postman](https://www.getpostman.com/) (or similar) for your platform [here](https://www.getpostman.com/apps).
 
@@ -239,5 +236,5 @@ Use [Gradle](https://gradle.org/) war task.
 
 * [Kotlin](https://kotlinlang.org/)   - The JVM language
 * [Gradle](https://gradle.org/)       - Dependency Management
-* [Jersey](https://jersey.github.io/) - The web framework used
+* [Spring](https://spring.io/) - The web framework used
 * [MongoDB](https://www.mongodb.com/) - The database

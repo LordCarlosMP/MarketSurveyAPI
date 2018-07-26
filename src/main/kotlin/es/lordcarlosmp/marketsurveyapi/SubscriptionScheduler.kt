@@ -7,23 +7,16 @@ import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency.YEARLY
 import es.lordcarlosmp.marketsurveyapi.database.MarketSurveyRepository
 import es.lordcarlosmp.marketsurveyapi.database.SubscriptionRepository
 import it.sauronsoftware.cron4j.Scheduler
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
-
 
 /**
  * Schedules the notification-sending tasks.
  */
-@Service
-class SubscriptionScheduler {
-
-	//todo: documentation
-	@Autowired
-	private lateinit var subscriptionsRepository: SubscriptionRepository
+class SubscriptionScheduler(
+		private val subscriptionsRepository: SubscriptionRepository,
+		private val marketSurveySubscription: MarketSurveyRepository,
+		private val notifier: Notifier) {
 	
-	//todo: documentation
-	@Autowired
-	private lateinit var marketSurveySubscription: MarketSurveyRepository
+	
 	
 	init {
 		val s = Scheduler()
@@ -40,8 +33,24 @@ class SubscriptionScheduler {
 	 */
 	private fun sendMarketSurveysToSubscribers(frequency: SubscriptionFrequency) {
 		for (subscriber in subscriptionsRepository.findAllInFrecuency(frequency)) {
-			subscriber.notifySubscriber(marketSurveySubscription.readMatchingRequest(subscriber.request))
+			notifier.notifySubscriber(subscriber, marketSurveySubscription.findAllMatching(subscriber.request))
 		}
 	}
-	
+}
+
+/**
+ * Notifies subscribers about available market surveys.
+ */
+object Notifier {
+	@Suppress("UNUSED_PARAMETER")
+			/**
+	 * Sends a messago to the subscribers whoose subscription is
+	 * @param subscription
+	 * with the content of
+	 * @param marketSurveys
+	 *
+	 * is not implemented because providing market survey results
+	 * fall outside the scope of this project.
+	 */
+	fun notifySubscriber(subscription: Subscription, marketSurveys: List<MarketSurvey>): Nothing = TODO("Not Implemented")
 }

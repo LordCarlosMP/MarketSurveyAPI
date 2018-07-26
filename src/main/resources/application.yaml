@@ -3,6 +3,8 @@ spring:
 #    date-format: yyyy-mm-dd
   data:
     mongodb:
+      host: localhost
+      port: 27017
       database: marketsurveyapi
       # authentication-database:
       # username: some-user
