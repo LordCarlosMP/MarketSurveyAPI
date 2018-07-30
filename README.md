@@ -1,11 +1,9 @@
 # marketsurveyapi
 
 ## Getting Started
-A RESTful API made by Carlos Muñoz Pelaz
+A RESTful API for managing market surveys and market survey subscriptions
 
-This API consist of in
-
-MarketsurveyAPI has 3 functionalities:
+MarketsurveyAPI has 4 functionalities:
 
     1. CRUD operations with market surveys.
     
@@ -19,27 +17,26 @@ MarketsurveyAPI has 3 functionalities:
 
 1. Java Virtual machine or docker engine.
 
-2. A usable MongoDB the database and its type its credentials in the application.yml.
+2. A usable MongoDB the database.
 
-###### Hint:  You can modify database credentials in mongo_config.json (inside the .war).
+###### Hint:  You can modify database credentials in application.yml
 
 ### Installation
 
+1. Modify the mongo database credentials in src/resources/application.yml
+
 1. Download [this](https://github.com/LordCarlosMP/marketsurveyapi) GitHub repository.
 
-2 Run the .jar resulting of gradle build task or the container created by the gradle docker task.
+2. Run the .jar resulting of gradle build task or the container created by the gradle docker task.
 
-4. Install [Postman](https://www.getpostman.com/) (or similar) for your platform [here](https://www.getpostman.com/apps).
+###How to use it
 
-## Testing via HTTP
+1. For interacting directly with the api, install [Postman](https://www.getpostman.com/) (or similar) for your platform [here](https://www.getpostman.com/apps).
 
-###### Warn: If you are running the server with IntelliJ run/debug configurations, or, for any other reason, in the ROOT directory, remove the middle /marketsurvey from the url.
-
-#### 1 Introducing market surveys, through the PUT method in the URL:
+#### 1 Introducing market surveys, through the POST method in the URL:
 ```
-http://tomcat-server-ip:port/marketsurveyapi/marketsurveys
 ```
-The PUT body may be a JSON in this format:
+The PUT body may be a MarketSurvey's JSON in this format:
 
 ```
 {
@@ -66,7 +63,7 @@ The PUT body may be a JSON in this format:
 
 #### 2 Retrieving market surveys according to a market survey request, through the POST method in the URL: 
  ```
- http://tomcat-server-ip:port/marketsurveyapi/marketsurveys
+http://your-ip-address:port/marketsurveys
  ```
  
  Note that marketsurveyapi will consider as "matching" if it fit all these requirements:
@@ -79,8 +76,6 @@ The PUT body may be a JSON in this format:
  
  4. The market survey only contains the genders allowed in the request.
  
-###### NOTE: the database is already provided with many market surveys, most of them with id = 1.
-
 ```
 {
   "subject": 1,
@@ -162,6 +157,12 @@ Or even this.
   "subject": 1
 }
 ```
+#### 3 Retrieving market surveys by its Id, through the get method in the URL: 
+```
+http://your-ip-address:port/marketsurveys/id?id=123
+```
+
+
 
 #### 3 Submitting subscriptions, through the PUT method in the URL:
 ```
@@ -215,7 +216,7 @@ The PUT body may be a JSON in this format:
 ```
 #### For retrieving all the subscribers, run a GET request in the URL:
 ```
-http://tomcat-server-ip:port/marketsurveyapi/subscriptions
+http://your-ip-address:port/subscriptions
 ```
 Remember that every day/week/month/year the api send all the subscribers a notification.
 

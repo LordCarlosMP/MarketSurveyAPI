@@ -1,6 +1,5 @@
 package es.lordcarlosmp.marketsurveyapi
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import org.bson.types.ObjectId
 import org.mongodb.morphia.annotations.Embedded
 import org.mongodb.morphia.annotations.Entity
@@ -8,19 +7,102 @@ import org.mongodb.morphia.annotations.Id
 import java.util.*
 
 /**
- * The class we are using to manage market survey's
- * subscriptions.
+ * Represents real life MarketSurvey's characteristics,
+ * its instances will be seriealized / deserialized
+ * by Jackson and stored / readed by morphia.
  */
 
 @Entity
-data class Subscription(
-		//todo: comentario decir que deja de ser null cuando se guarda en la base de datos
+data class MarketSurvey(
 		
 		/**
-		 * The Id of the subscription, null until it's stored in the database.
+		 * The id of the MarketSurvey in the database.
 		 */
 		@Id
-		val id: String? = null,
+		var id: String = createDatabaseId(),
+		
+		/**
+		 * The subject of the survey, represented by a number.
+		 */
+		val subject: Int,
+		
+		/**
+		 * The date when the market survey was made.
+		 */
+		val date: Date,
+		
+		/**
+		 * The Country where the market survey was made.
+		 */
+		val country: String,
+		
+		/**
+		 * The provider of the market survey.
+		 */
+		val provider: String,
+		
+		/**
+		 * The target of the market survey.
+		 */
+		val target: Target)
+
+
+/**
+ * Creates a database Id of Type String with ObjectId.
+ */
+fun createDatabaseId() = ObjectId().toHexString()
+
+/**
+ * The class used to manage market survey's requests,
+ * its purpose is to filter market surveys stored in the database,
+ * a market survey request will match in the Request if:
+ * - Has exact same subject.
+ * - Has been done after the [date] of the request.
+ * - Has been made in one of the [countries] of the request.
+ * - Its [target] matches with the request [target].
+ *
+ *  The filtering is made in [es.lordcarlosmp.marketsurveyapi.database.MongoMarketSurveyRepository].
+ */
+@Embedded
+data class Request(
+		
+		/**
+		 * The subject of the desired market surveys.
+		 */
+		val subject: Int,
+		
+		/**
+		 * The oldest dates that the surveys can have.
+		 * null means no filter.
+		 */
+		val date: Date? = null,
+		
+		/**
+		 * The countries of the market survey request,
+		 * null means no filter.
+		 */
+		val countries: List<String>? = null,
+		
+		/**
+		 * The target of the desired market survey.
+		 * null means no filter.
+		 */
+		val target: Target? = null
+)
+
+/**
+ * Represents market survey subscriptions,
+ * its instances will be seriealized / deserialized
+ * by Jackson and stored / readed by morphia.
+ */
+@Entity
+data class Subscription(
+		
+		/**
+		 *  The id of the subscription in the database.
+		 */
+		@Id
+		var id: String = createDatabaseId(),
 		
 		/**
 		 * The request the subscriber is interested in.
@@ -28,20 +110,20 @@ data class Subscription(
 		val request: Request,
 		
 		/**
-		 * The subscription frequency.Array
+		 * The subscription frequency.
 		 */
 		val frequency: SubscriptionFrequency,
 		
 		/**
-		 * A class for storing the delivery data.
+		 * The DeliveryDate of the subscription.
 		 */
-		val sendData: SendData)
+		val deliveryData: DeliveryData)
 
 /**
- * SendData is the class who stores the necessary
- * data for sending notifications to the subscribers.
+ * Stores the necessary data for sending
+ * notifications to the subscribers.
  */
-data class SendData(
+data class DeliveryData(
 		
 		/**
 		 *  The e-mail where to send the notification.
@@ -59,7 +141,7 @@ data class SendData(
 		val postalDirection: String? = null,
 		
 		/**
-		 * The ftp where to send the notification.
+		 * The ftp where to send the notification.
 		 */
 		val ftp: String? = null)
 
@@ -71,71 +153,8 @@ enum class SubscriptionFrequency {
 }
 
 /**
- * The class we are using to manage MarketSurveys,
- * and will provide all functions to convert them to json.
+ * Represents the target of people where a survey was made.
  */
-@Embedded
-data class Request(
-		
-		/**
-		 * The subject of the desired market survey.
-		 */
-		val subject: Int,
-		
-		/**
-		 * The date where the market survey was made,
-		 * null means no filtering.
-		 */
-		@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
-		val date: Date? = null,
-		
-		/**
-		 * The country of the market survey request,
-		 * null means no filtering.
-		 */
-		val countries: List<String>? = null,
-		
-		/**JsonConverter
-		 * The target of the desired market survey.
-		 * null means no filtering.
-		 */
-		val target: Target? = null
-)
-
-@Entity
-data class MarketSurvey(
-		//todo: comentario
-		@Id
-		val id: ObjectId,
-		/**
-		 * The subject of the survey, represented by a number
-		 * as the example in the API instructions.
-		 */
-		val subject: Int,
-		
-		/**
-		 * The date when the market survey was made.
-		 */
-		//todo: explica anotacion
-		@get:JsonSerialize(using = YyyyMmDdDateSerializer::class)
-		val date: Date,
-		
-		/**
-		 * The Country where the market survey was made.
-		 */
-		
-		val country: String,
-		
-		/**
-		 * Provider, the provider of the market survey.
-		 */
-		val provider: String,
-		
-		/**
-		 * The target of the market survey.
-		 */
-		val target: Target)
-
 @Embedded
 data class Target(
 		
@@ -143,23 +162,23 @@ data class Target(
 		 * The genders of the market survey respondents,
 		 * null means unknown.
 		 */
-		val genders: List<Gender>?,
+		val genders: List<Gender>? = null,
 		
 		/**
 		 * The age range of the market survey respondents,
 		 * null means unknown.
 		 */
-		val age: Range?,
+		val age: Range? = null,
 		
 		/**
 		 * The annual income range of the market survey respondents,
 		 * null means unknown.
 		 */
-		val income: Range?
+		val income: Range? = null
 )
 
 /**
- * The class we are using to store and compare ranges.
+ * Stores and compares ranges.
  */
 @Embedded
 data class Range(val start: Int, val endInclusive: Int) {

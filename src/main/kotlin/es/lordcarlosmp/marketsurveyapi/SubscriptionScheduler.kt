@@ -16,8 +16,6 @@ class SubscriptionScheduler(
 		private val marketSurveySubscription: MarketSurveyRepository,
 		private val notifier: Notifier) {
 	
-	
-	
 	init {
 		val s = Scheduler()
 		s.schedule("0 0 * * *") { sendMarketSurveysToSubscribers(DAILY) }
@@ -29,7 +27,7 @@ class SubscriptionScheduler(
 	
 	/**
 	 * This function send the market surveys to all the
-	 * subscribers stored in the database.
+	 * subscribers stored in the database with the given [frequency]
 	 */
 	private fun sendMarketSurveysToSubscribers(frequency: SubscriptionFrequency) {
 		for (subscriber in subscriptionsRepository.findAllInFrecuency(frequency)) {
@@ -44,13 +42,13 @@ class SubscriptionScheduler(
 object Notifier {
 	@Suppress("UNUSED_PARAMETER")
 			/**
-	 * Sends a messago to the subscribers whoose subscription is
-	 * @param subscription
-	 * with the content of
-	 * @param marketSurveys
-	 *
-	 * is not implemented because providing market survey results
-	 * fall outside the scope of this project.
-	 */
+			 * Sends a messago to the subscribers whoose subscription is
+			 * @param subscription
+			 * with the content of
+			 * @param marketSurveys
+			 *
+			 * is not implemented because providing market survey results
+			 * fall outside the scope of this project.
+			 */
 	fun notifySubscriber(subscription: Subscription, marketSurveys: List<MarketSurvey>): Nothing = TODO("Not Implemented")
 }

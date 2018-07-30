@@ -3,14 +3,12 @@ package es.lordcarlosmp.marketsurveyapi
 import es.lordcarlosmp.marketsurveyapi.SubscriptionFrequency.WEEKLY
 import es.lordcarlosmp.marketsurveyapi.database.SubscriptionRepository
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
-import org.mockito.MockitoAnnotations
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -20,42 +18,33 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-//todo: los nombres de los tests, mal escritos están
+
 @RunWith(SpringJUnit4ClassRunner::class)
+@AutoConfigureMockMvc
 @SpringBootTest
 class SubscriptionControllerTest {
 	
-	@InjectMocks
-	lateinit var subscriptionController: SubscriptionController
-	
-	@Mock
+	@Autowired
 	lateinit var repo: SubscriptionRepository
 	
+	@Autowired
 	lateinit var mockMvc: MockMvc
 	
-	@Before
-	fun initMocks() {
-		MockitoAnnotations.initMocks(this)
-		this.mockMvc = MockMvcBuilders.standaloneSetup(subscriptionController).build()
-	}
-	
 	@Test
-	fun createMarketSurveySubscription() {
+	fun testCreateMarketSurveySubscription() {
 		
 		mockMvc.perform(post("/subscriptions")
 				.contentType(APPLICATION_JSON_UTF8)
 				.content(mapper.writeValueAsString(exampleSubscription)))
 				.andExpect(status().isCreated)
 		
-		verify(repo).create(exampleSubscription)
+		assertEquals(exampleSubscription, repo.findById(exampleSubscription.id))
 	}
 	
 	@Test
-	fun getMarketSurveySubscribers() {
+	fun testGetAllSubscribers() {
 		
-		`when`(repo.findAll()).thenReturn(exampleSubscriptionList)
-		
+		for (subscription in exampleSubscriptionList) repo.create(subscription)
 		val content = mockMvc.perform(get("/subscriptions"))
 				.andExpect(status().isOk)
 				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
@@ -65,45 +54,44 @@ class SubscriptionControllerTest {
 	}
 	
 	@Test
+	fun testGetSubscriptionById() {
+		
+		repo.create(exampleSubscription)
+		val content = mockMvc.perform(get("/subscriptions/id")
+				.param("id", exampleSubscription.id))
+				.andExpect(status().isOk)
+				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+				.andReturn().response.contentAsString
+		
+		assertEquals(exampleSubscription, mapper.readValue(content, subscriptionType))
+	}
+	
+	@Test
 	fun getAllMarketSurveySubscribersInFrequency() {
 		
+		for (subscription in exampleSubscriptionList) repo.create(subscription)
 		val frequency = WEEKLY
-		
-		`when`(repo.findAllInFrecuency(frequency)).thenReturn(exampleSubscriptionList)
-		
 		val content = mockMvc.perform(get("/subscriptions/frequency")
 				.param("frequency", "$frequency"))
 				.andExpect(status().isOk)
 				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
 				.andReturn().response.contentAsString
 		
-		
-		assertEquals(exampleSubscriptionList, mapper.readValue(content, subscriptionListType))
+		assertEquals(listOf(exampleSubscription), mapper.readValue(content, subscriptionListType))
 	}
 	
 	@Test
 	fun testDeleteById() {
-		val id = "abcabc123123"
 		
+		repo.create(exampleSubscription)
 		mockMvc.perform(delete("/subscriptions")
-				.param("id", id))
+				.param("id", exampleSubscription.id))
 				.andExpect(status().isOk)
-		
-		verify(repo).delete(id)
+		assertNull(repo.findById(exampleSubscription.id))
 	}
 	
-	@Test
-	fun testGetSubscriptionById() {
-		val id = "abcabc123123"
-		
-		`when`(repo.findById(id)).thenReturn(exampleSubscription)
-		
-		val content = mockMvc.perform(get("/subscriptions/id")
-				.param("id", id))
-				.andExpect(status().isOk)
-				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-				.andReturn().response.contentAsString
-		
-		assertEquals(exampleSubscription, mapper.readValue(content, subscriptionType))
+	@Before
+	fun cleanDb() {
+		repo.findAll().forEach { repo.delete(it.id) }
 	}
 }

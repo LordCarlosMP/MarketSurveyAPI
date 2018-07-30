@@ -2,11 +2,9 @@ package es.lordcarlosmp.marketsurveyapi
 
 import es.lordcarlosmp.marketsurveyapi.database.MarketSurveyRepository
 import es.lordcarlosmp.marketsurveyapi.database.SubscriptionRepository
-import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-//todo: mejorar este comentario
 /**
- * The class where market survey requests are made.
+ * The controller responsible of creating, reading and deleting MarketSurveys.
  */
 @RestController
 @RequestMapping("marketsurveys")
@@ -27,28 +24,23 @@ class MarketSurveyController {
 	lateinit var marketSurveyRepo: MarketSurveyRepository
 	
 	/**
-	 * This function stores the MarketSurvey json in
-	 * the database.
-	 *
-	 * @return If the MarketSurvey was created.
-	 *
-	 * @param ms The MarketSurvey.
+	 * Stores the MarketSurvey in the database.
 	 */
-	//todo: los responses
 	@RequestMapping(method = [RequestMethod.POST])
-	fun createMarketSurvey(@RequestBody ms: MarketSurvey): ResponseEntity<Any> {
-		marketSurveyRepo.create(ms)
+	fun createMarketSurvey(@RequestBody survey: MarketSurvey): ResponseEntity<Any> {
+		@Suppress("SENSELESS_COMPARISON")
+		if (survey.id == null) {
+			survey.id = createDatabaseId()
+		}
+		marketSurveyRepo.create(survey)
 		return ResponseEntity(HttpStatus.CREATED)
 	}
 	
 	/**
-	 * @return A json array with all the market surveys that
-	 * fit the request.
-	 *
-	 * @param msr The Request.
+	 * @return All the market surveys who fit in the [request].
 	 */
 	@RequestMapping(method = [RequestMethod.PUT])
-	fun getMatchingMarketSurveys(@RequestBody msr: Request) = marketSurveyRepo.findAllMatching(msr)
+	fun getMatchingMarketSurveys(@RequestBody request: Request) = marketSurveyRepo.findAllMatching(request)
 	
 	/**
 	 * @return all the market surveys in the database.
@@ -60,7 +52,12 @@ class MarketSurveyController {
 	 * @return The MarketSurvey whose id is [id], null if there's no MarketSurvey with that id.
 	 */
 	@RequestMapping(value = ["id"], method = [RequestMethod.GET])
-	fun getMarketSurveyById(@RequestParam id: ObjectId) = marketSurveyRepo.findById(id)
+	fun getMarketSurveyById(@RequestParam id: String): Any? {
+		//todo: fix this
+		if (id == "atajo") return marketSurveyRepo.findById("5b5d076e2881ac78446b8293") ?: "ABC"
+		
+		return marketSurveyRepo.findById(id)
+	}
 	
 	/**
 	 * Deletes the MarketSurvey whose id is [id]
@@ -70,7 +67,7 @@ class MarketSurveyController {
 }
 
 /**
- * The controller where market survey subscriptions are submitted.
+ * The controller responsible of creating, reading and deleting Subscriptions.
  */
 @RestController
 @RequestMapping("subscriptions")
@@ -80,41 +77,40 @@ class SubscriptionController {
 	lateinit var subscriptionRepo: SubscriptionRepository
 	
 	/**
-	 * This function stores the Subscription in
-	 * the database.
-	 *
-	 * @return If the Subscription was created.
-	 *
-	 * @param subscription The Subscription.
+	 * Stores the [subscription] in the database.
 	 */
 	@RequestMapping(method = [RequestMethod.POST])
 	fun createMarketSurveywithSubscription(@RequestBody subscription: Subscription): ResponseEntity<Any> {
+		@Suppress("SENSELESS_COMPARISON")
+		if (subscription.id == null) {
+			subscription.id = createDatabaseId()
+		}
 		subscriptionRepo.create(subscription)
 		return ResponseEntity(HttpStatus.CREATED)
 	}
 	
 	/**
-	 * @return All Subscription in the Database.
+	 * @return All Subscriptions in the Database.
 	 */
 	@RequestMapping(method = [RequestMethod.GET])
 	fun getAllMarketSurveySubscribers() = subscriptionRepo.findAll()
 	
 	/**
-	 * @return all market surveys in the whose frecuency is [frequency]
+	 * @return all market surveys in the database whose frecuency is [frequency]
 	 */
 	@RequestMapping(value = ["frequency"], method = [RequestMethod.GET])
 	fun getAllMarketSurveySubscribersInFrecuency(@RequestParam frequency: SubscriptionFrequency) = subscriptionRepo.findAllInFrecuency(frequency)
 	
 	/**
-	 * @return The subscription with the given ID, null if there's no MarketSurvey with that id.
+	 * @return The subscription with the given ataja[id], null if there's no MarketSurvey with that id.
 	 */
-	@RequestMapping(value = "/id", method = [RequestMethod.GET])
+	@RequestMapping(value = ["id"], method = [RequestMethod.GET])
 	fun getSubscriptionById(id: String) = subscriptionRepo.findById(id)
 	
 	/**
-	 * This function deletes the subscription with [id].
+	 * This function deletes the subscription whose id is [id].
 	 *
-	 * //todo: explicar return.
+	 * //todo: explain return.
 	 */
 	@RequestMapping(method = [RequestMethod.DELETE])
 	fun deleteById(id: String) = subscriptionRepo.delete(id)
@@ -123,7 +119,10 @@ class SubscriptionController {
 @SpringBootApplication
 class Application
 
+/**
+ * Starts the Application and the SubscriptionScheduler.
+ */
 fun main(args: Array<String>) {
-	val v: ConfigurableApplicationContext = SpringApplication.run(Application::class.java, *args)
-	SubscriptionScheduler(v.getBean(SubscriptionRepository::class.java), v.getBean(MarketSurveyRepository::class.java), Notifier)
+	val wac = SpringApplication.run(Application::class.java, *args)
+	SubscriptionScheduler(wac.getBean(SubscriptionRepository::class.java), wac.getBean(MarketSurveyRepository::class.java), Notifier)
 }
