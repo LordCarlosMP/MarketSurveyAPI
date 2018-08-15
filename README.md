@@ -159,11 +159,8 @@ Or even this.
 ```
 #### 3 Retrieving market surveys by its Id, through the get method in the URL: 
 ```
-http://your-ip-address:port/marketsurveys/id?id=123
+http://your-ip-address:port/marketsurveys/id?id=MarketSurvey's ID
 ```
-
-
-
 #### 3 Submitting subscriptions, through the PUT method in the URL:
 ```
 http://tomcat-server-ip:port/marketsurveyapi/subscriptions
