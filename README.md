@@ -207,7 +207,7 @@ The PUT body may be a JSON in this format:
     "mail": "carlosychispas@gmail.com",
     "phone": "+34 688 92 15 81",
     "postalDirection": " 39781 C/ example address 46 5B",
-    "ftp": "ftp://user:pass@somehost/afolder"
+    "ftp": "ftp://user:pass@somehost/aFolder"
   }
 }
 ```
